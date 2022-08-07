@@ -47,10 +47,21 @@ where continent is not null
 group by continent
 order by max_deaths desc 
 
+select continent,sum(cast(new_deaths as int)) as TotaldeathsCounts 
+from PortfolioProject..CovidDeaths$
+where continent is not null
+group by continent
+order by TotaldeathsCounts desc 
+
+select location,population,date,max(new_cases) as MaximumCase,max((new_cases/population))*100 as InfectedPopulationPercentage
+from PortfolioProject..CovidDeaths$
+group by location,population,date
+order by InfectedPopulationPercentage desc
+
 --GLOBAL NUMBERS
 
 --Total death percentage date wise
-select date,sum(new_cases)total_cases,sum(cast(new_deaths as int)) as total_deaths, 
+select date,sum(new_cases)as total_cases,sum(cast(new_deaths as int)) as total_deaths, 
 sum(cast(new_deaths as int))/sum(new_cases)*100 as death_percentage
 from PortfolioProject..CovidDeaths$ 
 where continent is not null
@@ -159,17 +170,3 @@ where continent is not null */
 select * from DeathPercentage 
 select * from DeathSumRolling
 --select *,RollingSum/population*100 from DeathSumRolling
-
-
-
-
-
-
-
-
-
-
-
-
-
-
