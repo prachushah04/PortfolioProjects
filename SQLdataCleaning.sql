@@ -1,4 +1,5 @@
 --DATA CLEANING
+
 select * from PortfolioProject..NashvilleHousing
 
 
@@ -14,18 +15,14 @@ update NashvilleHousing
 set SalesDateConverted = CONVERT(date,SaleDate)
 
 --populate property address data
---Always make sure to order tasks because for example, if we executed separation thing first we would not be able to do this belowed task.
 
 select a.ParcelID,a.PropertyAddress,b.ParcelID,b.PropertyAddress
 from PortfolioProject..NashvilleHousing a
 join PortfolioProject..NashvilleHousing b
 	on a.ParcelID = b.ParcelID
-	AND a.[UniqueID ]<>b.[UniqueID ] --to find out same parcelId with null address so that we can trace using Uniqueid
+	AND a.[UniqueID ]<>b.[UniqueID ] 
 where a.PropertyAddress is null
 
---Though the property address is null in some of the rows there are ParcelID with which we can find the address
---For example, Parcelid is 025 003 and in one row the address is "xyz" but in another row it is null but the parcelId remain same for that null address
---While using join in update we have to use table alias
 
 update a                                                   
 set PropertyAddress = ISNULL(a.PropertyAddress,b.PropertyAddress)
@@ -98,10 +95,6 @@ select OwnerAddress,OwnerSplitAddress,OwnerSplitCity,OwnerSplitState
 from PortfolioProject..NashvilleHousing
 
 --Changing values (Y/N/YES/NO -> Yes/NO)
-/*select distinct(SoldAsVacant),count(SoldAsVacant)
-from PortfolioProject..NashvilleHousing
-group by SoldAsVacant
-order by 2*/
 
 select SoldAsVacant,
 	case when SoldAsVacant = 'Y' then 'Yes'
@@ -135,11 +128,14 @@ select *,
 
 from PortfolioProject..NashvilleHousing
 )
+
+
 /*
 select * from DuplicateValuesCTE
 where row_num > 1
 order by PropertyAddress
 */
+
 delete from DuplicateValuesCTE
 where row_num > 1
 
@@ -150,8 +146,4 @@ select *
 from PortfolioProject..NashvilleHousing
 
 Alter table PortfolioProject..NashvilleHousing
-drop column PropertyAddress,OwnerAddress,TaxDistrict
-
-Alter table PortfolioProject..NashvilleHousing
-drop column SaleDate
-
+drop column PropertyAddress,OwnerAddress,TaxDistrict,SaleDate
